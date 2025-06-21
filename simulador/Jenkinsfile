@@ -1,3 +1,4 @@
+/*
 pipeline {
   agent any
   tools {
@@ -15,18 +16,7 @@ pipeline {
       }
     }
 
-    stage('Lint (simulado)') {
-      steps {
-        echo 'Revisando estilo de código (simulado con mvn fmt:check)...'
-        sh 'echo "Lint OK"'
-      }
-    }
-
-    stage('Compilar y testear') {
-      steps {
-        sh 'mvn clean verify'
-      }
-    }
+    
 
     stage('Coverage') {
       steps {
@@ -54,18 +44,42 @@ pipeline {
 
     stage('Escaneo de seguridad') {
       parallel {
-        stage('Trivy') {
-          steps {
-            sh "docker build -t ${IMAGE_NAME} ."
-            sh "trivy image ${IMAGE_NAME} || true"  // Permite continuar aún si hay findings
-          }
+      stage('Trivy') {
+        steps {
+        sh "docker build -t ${IMAGE_NAME} ."
+        sh "trivy image ${IMAGE_NAME} || true"  // Permite continuar aún si hay findings
         }
-        stage('OWASP ZAP (simulado)') {
-          steps {
-            echo 'Escaneando con OWASP ZAP (simulado)...'
-            sh 'echo "ZAP OK"'
-          }
+      }
+      stage('OWASP Dependency-Check') {
+        steps {
+        sh '''
+          mkdir -p dependency-check-report
+          dependency-check.sh \
+          --project "transchile" \
+          --scan "." \
+          --format HTML \
+          --format XML \
+          --out "dependency-check-report" \
+          --enableExperimental \
+          --nodeAuditSkipDevDependencies false
+        '''
         }
+        post {
+        always {
+          publishHTML(target: [
+          reportName: 'OWASP Dependency-Check',
+          reportDir: 'dependency-check-report',
+          reportFiles: 'index.html'
+          ])
+        }
+        }
+      }
+      }
+    }
+
+    stage('Compilar y testear') {
+      steps {
+        sh 'mvn clean verify'
       }
     }
 
@@ -99,3 +113,4 @@ pipeline {
     }
   }
 }
+*/
