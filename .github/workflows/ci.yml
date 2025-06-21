@@ -2,10 +2,11 @@ name: CI TransChile
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - 'simulador/**'
   pull_request:
-    branches: [ main ]
-
+    paths:
+      - 'simulador/**'
 jobs:
   build:
     runs-on: ubuntu-latest
