@@ -2,6 +2,7 @@ name: CI TransChile
 
 on:
   push:
+    branches: [ main ]
     paths:
       - 'simulador/**'
   pull_request:
