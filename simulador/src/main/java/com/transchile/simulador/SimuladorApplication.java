@@ -8,6 +8,7 @@ public class SimuladorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SimuladorApplication.class, args);
+		//Shameful counter: 1
 	}
 
 }
